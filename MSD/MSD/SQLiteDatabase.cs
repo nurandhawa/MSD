@@ -5,7 +5,8 @@ using System.Data.SQLite;
 using System.Windows.Forms;
 
 
-//Class from brennydoogles SQLite with C# tutorial
+// Class from brennydoogles SQLite with C# tutorial
+// With some added methods from Jean-Marc 
 class SQLiteDatabase
 {
     String dbConnection;
@@ -41,6 +42,8 @@ class SQLiteDatabase
         str = str.Trim().Substring(0, str.Length - 1);
         dbConnection = str;
     }
+
+
 
     /// <summary>
     ///     Allows the programmer to run a query against the Database.
@@ -140,12 +143,89 @@ class SQLiteDatabase
     /// <param name="tableName">The table from which to delete.</param>
     /// <param name="where">The where clause for the delete.</param>
     /// <returns>A boolean true or false to signify success or failure.</returns>
-    public bool Delete(String tableName, String where)
+    public bool DeleteRow(String tableName, String where)
     {
         Boolean returnCode = true;
         try
         {
             this.ExecuteNonQuery(String.Format("delete from {0} where {1};", tableName, where));
+        }
+        catch (Exception fail)
+        {
+            MessageBox.Show(fail.Message);
+            returnCode = false;
+        }
+        return returnCode;
+    }
+
+    /// <summary>
+    ///     Allows the programmer to run a query against the Database.
+    /// </summary>
+    /// <param name="sql">The SQL to run</param>
+    /// <returns>A DataTable containing the result set.</returns>
+    public List<List<object>> Query(string table, List<string> headers)
+    {
+        try
+        {
+            //Format the select string
+            string sql = "select ";
+            foreach (string str in headers)
+            {
+                sql += str + ", ";
+            }
+            sql = sql.Remove(sql.Length - 2);
+            sql += " from " + table;
+
+            //Send off the command
+            SQLiteConnection cnn = new SQLiteConnection(dbConnection);
+            cnn.Open();
+            SQLiteCommand mycommand = new SQLiteCommand(cnn);
+            mycommand.CommandText = sql;
+            SQLiteDataReader reader = mycommand.ExecuteReader();
+
+            List<List<object>> list = new List<List<object>>();
+
+            foreach (object o in reader)
+            {
+                List<object> values = new List<object>();
+                for (int i = 0; i < headers.Count; i++)
+                {
+                    values.Add(reader.GetValue(i));
+                }
+                
+                list.Add(values);
+            }
+
+            reader.Close();
+            cnn.Close();
+
+            return list;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    /// <summary>
+    ///     Allows the programmer to easily create a new table
+    /// </summary>
+    /// <param name="tableName">The table to create.</param>
+    /// <param name="data">A dictionary containing the column names and data type.</param>
+    /// <returns>A boolean true or false to signify success or failure.</returns>
+    public bool CreateTable(String tableName, Dictionary<String, String> data)
+    {
+        String formatted = "";
+        Boolean returnCode = true;
+        foreach (KeyValuePair<String, String> val in data)
+        {
+            formatted += String.Format("{0}", val.Key.ToString());
+            formatted += String.Format(" {0},", val.Value);
+        }
+        formatted = formatted.Substring(0, formatted.Length - 1);
+        try
+        {
+            this.ExecuteNonQuery(String.Format("create table {0}({1});", tableName, formatted));
         }
         catch (Exception fail)
         {
