@@ -29,7 +29,7 @@ namespace MSD
                 Dictionary<string, string> data = new Dictionary<string, string>();
                 data.Add("Name", IB.name);
                 data.Add("Quantity", IB.quantity.ToString());
-                SQLDatabase.Insert("Test", data);
+                SQLDatabase.Insert("Medicine", data);
             }
         }
 
@@ -38,7 +38,7 @@ namespace MSD
             //Dictionary<string, string> data = new Dictionary<string, string>();
             //data.Add("Name", "varchar(30)");
             //data.Add("Quantity", "number(5)");
-            //SQLDatabase.CreateTable("Test", data);
+            //SQLDatabase.CreateTable("Medicine", data);
 
             //List<string> headers = new List<string>();
             //headers.Add("Name");
@@ -58,7 +58,7 @@ namespace MSD
             resultsView.View = View.Details;
             resultsView.Columns.Add("Name", 245, HorizontalAlignment.Left);
             resultsView.Columns.Add("Quantity", 241, HorizontalAlignment.Left);
-            DataTable dt = SQLDatabase.GetDataTable("select Name, Quantity from Test;");
+            DataTable dt = SQLDatabase.GetDataTable("select Name, Quantity from Medicine;");
 
             string[] Str = new string[2];
             ListViewItem newItem;
