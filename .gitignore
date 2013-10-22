@@ -1,9 +1,4 @@
 *.suo
-bin
-Bin
-bin/*
-!/bin/Debug/MSD.s3db
-Bin/*
 obj
 Obj
 *.user
