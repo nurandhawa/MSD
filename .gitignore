@@ -2,7 +2,7 @@
 bin
 Bin
 bin/*
-!MSD\MSD\bin\Debug\MSD.s3db
+!/bin/Debug/MSD.s3db
 Bin/*
 obj
 Obj
